@@ -68,7 +68,7 @@ Riko App {
                     Muestra el QR encriptado generado con la Custom Function en tiempo real.
                 }
 
-                // Condicion de Visibilidad: "Encargada", "Mesera", "Cocinero"
+                // Condicion de Visibilidad: "Encargada", "Mesera", "Cocinero" + "Logica de Condicion de Visibilidad: #31"
                 RegistrarEntradaSalida {
                     Su texto, ícono y función cambian usando Conditional Value basado en si el turno está iniciado o no.
                     Abre la cámara para escanear el QR. 
@@ -207,12 +207,15 @@ Boton "Asistencia" { // El del "MenuPrincipal"
             Navigate To -> Pagina Asistencia. (Entra directo a checar entrada/salida o ver su calendario).
         }
     }
-            
-    LogicaInterna_PaginaAsistencia {
-        VisibilidadBotonEscanearQR {
-            REGLA ANTI-TRAMPAS: 
-            Ocultar el botón SI: (diaDePago == diaDeHoyEnEspanol) AND (diasTrabajadosSemana == 0) AND (trabajandoActualmente == False).
-            Explicacion: Si es su dia de pago y su contador de dias está en 0, significa que acaba de cerrar su nomina (manual o por el robot). Al ocultar el boton, evitamos que registre entrada para evadir la falta que ya se le cobró.
+
+// "Logica de Condicion de Visibilidad: #31"
+    LogicaInterna_Pagina "Asistencia" { 
+        VisibilidadBoton "RegistrarEntradaSalida" {
+            REGLA ANTI-TRAMPAS Y UX DUEÑO: 
+            Ocultar el botón SI se cumple el GRUPO A o el GRUPO B (Apply Opposite Statement de un bloque OR):
+            - GRUPO A (UX Dueño): 'puesto' == 'Dueño'.
+            - GRUPO B (Anti-Trampas): (diaDePago == diaDeHoyEnEspanol) AND (diasTrabajadosSemana == 0) AND (trabajandoActualmente == False).
+            Explicacion: El Dueño nunca necesita escanear el QR para registrar asistencia. Para los empleados, si es su dia de pago y su contador de dias está en 0, significa que su nomina acaba de ser cerrada por falta (manual o por el robot); ocultamos el boton para evitar que registren entrada y evadan la falta.
         }
     }
 }
