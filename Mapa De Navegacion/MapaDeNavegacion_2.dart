@@ -22,7 +22,7 @@ Riko App {
     MenuPrincipal { // Tiene 5 Botones verticalmente |  Ya construido
         
         // Condicion de Visibilidad o Acceso: "Encargada", "Mesera", "Cocinero"
-        Nomina { // Ya construido
+        Nomina { // Ya construido | "Logica de Funcionalidad al tocarlo: #15"
             Visual {
                 Formato limpio de "Recibo Semanal" (Encabezado, Percepciones, Deducciones, Total Neto a Pagar), sin códigos oficiales.
             }
@@ -43,7 +43,7 @@ Riko App {
             }
         }
         
-        Asistencia {  // Ya construido
+        Asistencia {  // Ya construido | "Logica de Funcionalidad al tocarlo: #20"
 
             // Condicion de Visibilidad: "Encargada", "Mesera", "Cocinero
             EstructuraSuperior {
@@ -141,6 +141,78 @@ Riko App {
         }
     }
 }
+
+// "Logica de Funcionalidad al tocarlo: #15"
+        Boton "Nomina" { // El del "MenuPrincipal"
+            LogicaDeNavegacion_ElGuardia {
+                Paso1_ConsultaNotificaciones {
+                    Realiza un Single Time Query a la coleccion 'Notificaciones' buscando un documento donde 'refEmpleado' sea igual al actual y 'categoria' == 'nomina'.
+                }
+                
+                // --- ESCENARIO 5: EL ROBOT YA CERRÓ (El Sincronizado) ---
+                Condicion_NotificacionExiste (True) {
+                    NO crea documento en Nominas (el Robot ya lo hizo a las 3:00 am).
+                    Resetea los contadores del App State a 0 (propinas, bonos, reposicion, faltas, retardos).
+                    Borra el documento de 'Notificaciones' de la base de datos.
+                    Muestra Informational Dialog: "Tu nómina ha sido cerrada automáticamente por el sistema."
+                    Boton Aceptar del Dialog -> Navigate To: Pagina Nomina.
+                }
+
+                // --- ESCENARIOS 3 Y 4: LLEGÓ TARDE O FALTÓ EL DÍA DE PAGO ---
+                Condicion_CierrePendiente (False) Y (diaDePago == diaDeHoyEnEspanol) Y (trabajandoActualmente == False) Y (horaActual > horaEntradaOficial) Y (diasTrabajadosSemana > 0) {
+                    Lanza Modal ComponenteRojo (Advertencia de Peligro) {
+                        TextoMensaje {
+                            "Atención: Tienes un turno pendiente de registro. Si entras a ver tu nómina ahora, el sistema registrará tu falta y cerrará la semana."
+                        }
+                        BotonA_FalteCerrarNomina {
+                            Crea Documento en 'Nominas' (cobrando la falta usando la calculadoraNeto).
+                            Resetea TODOS los contadores a 0 (incluyendo diasTrabajadosSemana en la BD y App State).
+                            Muestra Informational Dialog: "Tu nómina de esta semana ha sido cerrada."
+                            Boton Aceptar del Dialog -> Navigate To: Pagina Nomina.
+                        }
+                        BotonB_LlegueTardeRegistrarAsistencia {
+                            Navigate To: Pagina Asistencia (Lo deja ir rápido a escanear su QR de entrada).
+                        }
+                    }
+                }
+
+                // --- ESCENARIOS 1 Y 2: TRABAJADOR NORMAL O TEMPRANERO ---
+                Condicion_Default (Cualquier otro caso) {
+                    Navigate To: Pagina Nomina. (Entra directo, su turno está activo o aún no es su hora de entrada).
+                }
+            }
+        }
+
+        // "Logica de Funcionalidad al tocarlo: #20"
+        Boton "Asistencia" { // El del "MenuPrincipal"
+            LogicaDeNavegacion_ElGuardia {
+                Paso1_ConsultaNotificaciones {
+                    Realiza un Single Time Query a la coleccion 'Notificaciones' buscando un documento donde 'refEmpleado' sea igual al actual y 'categoria' == 'nomina'.
+                }
+
+                // --- ESCENARIO DE SINCRONIZACIÓN AL QUERER CHECAR ---
+                Condicion_NotificacionExiste (True) {
+                    Resetea los contadores del App State a 0.
+                    Borra el documento de 'Notificaciones'.
+                    Muestra Informational Dialog: "Tu nómina de la semana pasada ha sido cerrada por el sistema debido a una falta."
+                    Boton Aceptar del Dialog -> Navigate To: Pagina Asistencia.
+                }
+
+                // --- ESCENARIO NORMAL ---
+                Condicion_Default (False) {
+                    Navigate To: Pagina Asistencia. (Entra directo a checar entrada/salida o ver su calendario).
+                }
+            }
+            
+            LogicaInterna_PaginaAsistencia {
+                VisibilidadBotonEscanearQR {
+                    REGLA ANTI-TRAMPAS: 
+                    Ocultar el botón SI: (diaDePago == diaDeHoyEnEspanol) AND (diasTrabajadosSemana == 0) AND (trabajandoActualmente == False).
+                    Explicacion: Si es su dia de pago y su contador de dias está en 0, significa que acaba de cerrar su nomina (manual o por el robot). Al ocultar el boton, evitamos que registre entrada para evadir la falta que ya se le cobró.
+                }
+            }
+        }
+
 
 // Aplicacion exclisiva que solo la tiene instalada el "Dueño" que aun no creamos nada pero ya estamos establecioendo su mapa de navegacion y su relacion con "Riko App"
 Riko Pro {
