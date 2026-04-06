@@ -1,0 +1,85 @@
+# 📦 ESTRUCTURA MAESTRA DE APP STATES: RIKO APP (Calculadora Offline)
+
+## Consideración Importante:
+Todas estas variables tienen la opción **Persisted: Encendido**. Esto significa que si el empleado cierra la app por accidente o reinicia su teléfono en medio del turno, su calculadora y sus datos seguirán intactos sin tener que volver a leer la base de datos.
+
+### 1. Variables de Sesión y Perfil
+* **Field Name:** refEmpleadoGuardada
+  * **Description:** Referencia del usuario actual. Permite hacer actualizaciones directas (como registrar asistencia) sin tener que buscarlo primero.
+  * **Field Type:** Document Reference (Collection: Usuarios)
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+* **Field Name:** numeroEmpleadoGuardado
+  * **Description:** Clave del empleado para mostrar en su perfil y usar en los tickets del Punto de Venta.
+  * **Field Type:** Integer
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+* **Field Name:** puestoGuardado
+  * **Description:** Define el rol ("Dueño", "Encargada", "Mesera", "Cocinero") para ocultar o mostrar botones en la interfaz sin consultar Firebase.
+  * **Field Type:** String
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+### 2. Variables de Horarios y Estatus
+* **Field Name:** turnoIniciadoGuardado
+  * **Description:** Reacciona al instante al escanear el QR. Cambia el botón de "Entrada" a "Salida" y es el interruptor maestro que arranca o congela la calculadora en tiempo real.
+  * **Field Type:** Boolean
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+* **Field Name:** horaEntradaOficialGuardada
+  * **Description:** Horario de entrada predeterminado. Se compara con la hora actual para saber si llegó tarde.
+  * **Field Type:** String
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+* **Field Name:** horaSalidaOficialGuardada
+  * **Description:** Horario de salida predeterminado del empleado.
+  * **Field Type:** String
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+* **Field Name:** diaDePagoGuardado
+  * **Description:** Día en el que se debe bloquear la app si no ha registrado asistencia y el dueño está por hacer el corte.
+  * **Field Type:** String
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+### 3. Variables Financieras (Alimento de la Calculadora)
+* **Field Name:** sueldoSemanalGuardado
+  * **Description:** Sueldo base para dividirlo entre los días y horas trabajadas.
+  * **Field Type:** Double
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+* **Field Name:** propinasGuardada
+  * **Description:** Dinero extra en propinas. Se actualiza silenciosamente al leer una notificación.
+  * **Field Type:** Double
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+* **Field Name:** bonosGuardado
+  * **Description:** Dinero extra por buen desempeño.
+  * **Field Type:** Double
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+* **Field Name:** reposicionGuardada
+  * **Description:** Dinero a descontar al empleado para que reponga algo de la taqueria.
+  * **Field Type:** Double
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+* **Field Name:** faltasGuardadas
+  * **Description:** Cantidad de faltas en la semana para restarlas del sueldo base neto.
+  * **Field Type:** Integer
+  * **Is List:** Apagado
+  * **Persisted:** Encendido
+
+* **Field Name:** retardosGuardados
+  * **Description:** Cantidad de retardos en la semana.
+  * **Field Type:** Integer
+  * **Is List:** Apagado
+  * **Persisted:** Encendido

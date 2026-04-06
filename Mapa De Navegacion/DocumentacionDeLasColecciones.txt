@@ -1,0 +1,179 @@
+# 📦 ESTRUCTURA MAESTRA DE BASE DE DATOS: RIKO APP & RIKO PRO
+
+## Colección: Usuarios
+**Descripción de la Colección:** Almacena los perfiles de los empleados y del dueño. Funciona como la fuente de verdad para el login casero, el cálculo de la nómina y el control de accesos (roles) dentro de la app.
+
+### Fields (Campos) para InicioSesionCasero y Seguridad:
+* **nombreEmpleado**
+    * Type: String
+    * Is List: Off
+    * Description: Nombre real del empleado. Usado en el perfil y para que el dueño vea quién hizo un reporte anónimo.
+* **numeroEmpleado**
+    * Type: Integer
+    * Is List: Off
+    * Description: Clave única del empleado. Se usa como "usuario" en el login casero y para imprimir tickets en el Punto de Venta.
+* **contrasena**
+    * Type: String
+    * Is List: Off
+    * Description: Contraseña en texto plano o cifrada para el login casero sin usar Firebase Auth oficial.
+* **requiereCambioContrasena**
+    * Type: Boolean
+    * Is List: Off
+    * Description: Si es True, fuerza al usuario a cambiar su contraseña en su primer inicio de sesión antes de dejarlo entrar al MenuPrincipal.
+* **puesto**
+    * Type: String
+    * Is List: Off
+    * Description: Define el rol exacto ("Dueño", "Encargada", "Mesera", "Cocinero") para controlar la visibilidad de pantallas y botones.
+* **UsarPDV**
+    * Type: Boolean
+    * Is List: Off
+    * Description: Permiso explícito para usar el Punto de Venta. Súper útil para darle acceso a un cocinero o bloquear a una mesera en tiempo real.
+* **empleadoActivo**
+    * Type: Boolean
+    * Is List: Off
+    * Description: True por defecto. Se cambia a False para "despedir/eliminar" al empleado sin tener que borrar su historial de la base de datos.
+* **telefono**
+    * Type: String
+    * Is List: Off
+    * Description: Datos de contacto del empleado.
+* **correo**
+    * Type: String
+    * Is List: Off
+    * Description: Datos de contacto del empleado.
+// Fields que usaran para Asistencia y Nómina:
+* **sueldoSemanal**
+    * Type: Double
+    * Is List: Off
+    * Description: Sueldo base oficial. Se lee esporádicamente para alimentar los App States.
+* **horaEntradaOficial**
+    * Type: String
+    * Is List: Off
+    * Description: Horario predeterminado del empleado para cruzarlo con sus escaneos de QR y saber si llegó tarde o faltó.
+* **horaSalidaOficial**
+    * Type: String
+    * Is List: Off
+    * Description: Horario predeterminado del empleado para cruzarlo con sus escaneos de QR y saber si llegó tarde o faltó.
+* **diaDePago**
+    * Type: String
+    * Is List: Off
+    * Description: Día de la semana (ej. "Miercoles") en el que se debe hacer el corte de nómina manual desde Riko Pro.
+* **diaDeDescanso**
+    * Type: String
+    * Is List: Off
+    * Description: Día libre del empleado (ej. "Jueves"). 
+* **turnoIniciado**
+    * Type: Boolean
+    * Is List: Off
+    * Description: Registro oficial en la nube de si el empleado está en turno (True) o ya salió (False).
+* **asistenciaActualRef**
+    * Type: Document Reference (Collection: HistorialAsistencias)
+    * Is List: Off
+    * Description: "El Puente". Guarda temporalmente el ID de la asistencia de hoy al entrar, para saber exactamente qué documento actualizar con la hora al salir.
+// Fields (Campos) Contadores (Reseteables al Corte de Nomina):
+* **propinas** / **bonos** / **reposicion**
+    * Type: Double (todos)
+    * Is List: Off
+    * Description: Dinero extra que se suma al neto (Percepciones). Se regresan a 0 al momento de aprobar la nómina en Riko Pro.
+* **faltas** / **retardos** / **diasTrabajadosSemana** / **reposicion**
+    * Type: Integer (todos)
+    * Is List: Off
+    * Description: Contadores que afectan el sueldo (Deducciones) o habilitan validaciones. Se resetean a 0 al momento del corte.
+
+## Colección: Notificaciones
+**Descripción de la Colección:** Sistema de sincronización silenciosa (Push-to-Sync) y alertas. Sirve como gatillo para que la app del empleado actualice sus App States específicos solo cuando hay cambios reales, ahorrando miles de lecturas innecesarias en Firebase.
+
+### Fields (Campos) de Enrutamiento y Lógica:
+* **destinatarioRef**
+    * Type: Document Reference (Collection: Usuarios)
+    * Is List: Off
+    * Description: Referencia exacta del empleado que debe recibir esta actualización. Evita que la notificación de propinas de un usuario dispare la actualización en el teléfono de otro.
+* **categoria**
+    * Type: String
+    * Is List: Off
+    * Description: Clasificación principal del evento (Ej. "nomina", "actualizacion_datos", "alerta_sistema"). Ayuda al 'Guardia' del MenuPrincipal a saber qué tipo de acción tomar.
+* **subcategoria**
+    * Type: String
+    * Is List: Off
+    * Description: El dato exacto que fue modificado (Ej. "propinas", "bonos", "corte_semanal"). Le dice a Riko App exactamente qué App State debe refrescar sin tener que actualizar todos los demás.
+* **fechaCreacion**
+    * Type: Timestamp
+    * Is List: Off
+    * Description: Fecha y hora exacta en la que el Dueño (desde Riko Pro) detonó este cambio. Útil para ordenar las notificaciones si se acumulan varias.
+// Fields (Campos) Opcionales / Visuales:
+* **mensajeOpcional**
+    * Type: String
+    * Is List: Off
+    * Description: Texto que se mostrará en un 'Informational Dialog' en pantalla si la actualización requiere que el empleado se entere visualmente (Ej. "Tu nómina ha sido cerrada por el patrón").
+* **valorNumerico**
+    * Type: Double
+    * Is List: Off
+    * Description: (¡Truco de Experta!) Si el Dueño actualiza las propinas a $50, Riko Pro guarda ese '50' directo en esta notificación. Así, Riko App lee la notificación, guarda el '50' en el App State 'propinasGuardada' y la borra, ¡sin tener que hacer una segunda lectura a la colección de Usuarios!
+
+## Colección: Nominas
+**Descripción de la Colección:** Funciona como el archivo histórico y la bóveda de recibos de pago. Cada documento es una "fotografía congelada" de la semana del empleado al momento del gatillazo de corte.
+
+### Fields (Campos) de Identificación:
+* **refEmpleado**
+    * Type: Document Reference (Collection: Usuarios)
+    * Is List: Off
+    * Description: Referencia al empleado al que le pertenece este recibo.
+* **nombreEmpleado**
+    * Type: String
+    * Is List: Off
+    * Description: Nombre del empleado guardado como texto fijo. Sirve para que en Riko Pro puedas ver la lista de recibos pendientes rapidísimo sin gastar lecturas extra consultando la colección de Usuarios.
+// Fields (Campos) de Tiempo y Estado:
+* **fechaCorte**
+    * Type: Timestamp
+    * Is List: Off
+    * Description: Fecha y hora exacta en la que tú (el dueño) diste el gatillazo de corte manual.
+* **estadoPago**
+    * Type: String
+    * Is List: Off
+    * Description: Inicia siempre en "Pendiente". Cuando le entregas el dinero físicamente al empleado o apruebas la nómina en Riko Pro, lo cambias a "Pagado".
+// Fields (Campos) Financieros (La Fotografía Congelada):
+* **sueldoSemanalBase**
+    * Type: Double
+    * Is List: Off
+    * Description: El sueldo base oficial que tenía asignado en esa semana.
+* **propinasCobradas** / **bonosCobrados** / **reposicionCobrada**
+    * Type: Double (todos)
+    * Is List: Off
+    * Description: El dinero extra exacto que generó y se le pagó en esa semana específica.
+* **faltasCobradras** / **retardosCobrados**
+    * Type: Integer (todos)
+    * Is List: Off
+    * Description: El registro de sus inasistencias en esa semana, justificación perfecta de por qué su cheque salió más bajo.
+* **totalNetoAPagar**
+    * Type: Double
+    * Is List: Off
+    * Description: La suma final y exacta que la calculadora arrojó en el instante del cierre.
+
+## Colección: HistorialAsistencias
+**Descripción de la Colección:** Colección principal para guardar el registro diario de asistencias, faltas, retardos y descansos de todos los empleados. Alimenta el calendario visual y justifica los cálculos de la nómina.
+
+### Fields (Campos) de Identificación y Búsqueda:
+* **refEmpleado**
+    * Type: Document Reference (Collection: Usuarios)
+    * Is List: Off
+    * Description: Referencia exacta al empleado dueño de este registro. Vital para filtrar su historial personal.
+* **fechaRegistro**
+    * Type: Timestamp
+    * Is List: Off
+    * Description: Fecha y hora exacta en la que se crea el documento (ya sea porque escaneó su entrada o porque el sistema le marcó falta).
+* **fechaTextoDia**
+    * Type: String
+    * Is List: Off
+    * Description: Fecha guardada en formato de texto puro (Ej. "2026-04-06"). Es un truco para que las búsquedas y los filtros en la tabla del calendario sean rapidísimos y no gasten procesamiento calculando días.
+// Fields (Campos) de Estatus y Horarios Reales:
+* **estadoDia**
+    * Type: String
+    * Is List: Off
+    * Description: Palabra clave del estado exacto del empleado ese día: "Asistencia", "Falta", "Retardo" o "Descanso". Esta palabra es la que lee la Custom Function para pintar los cuadritos de colores en el calendario.
+* **horaEntradaReal**
+    * Type: Timestamp
+    * Is List: Off
+    * Description: La hora exacta, segundo a segundo, en la que la cámara del teléfono del empleado desencriptó el código QR al llegar.
+* **horaSalidaReal**
+    * Type: Timestamp
+    * Is List: Off
+    * Description: La hora exacta en la que desencriptó el código QR al irse. Se actualiza súper rápido gracias a que usamos el "Puente" leyendo el campo asistenciaActualRef desde su perfil.

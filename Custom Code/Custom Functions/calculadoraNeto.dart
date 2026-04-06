@@ -57,8 +57,10 @@ double calculadoraNeto(
       totalSegundosTurno > 0 ? (sueldoDiario / totalSegundosTurno) : 0.0;
   DateTime entradaReal = parseHora(horaEntradaReal, entradaOficial);
 
-  // 1. CALCULAMOS SUELDO ACUMULADO
+  // 1. CALCULAMOS SUELDO ACUMULADO (Solo el tiempo real trabajado)
+  // Como bien dijiste, si faltó, diasTrabajadosSemana no subió, así que no se le paga ese día.
   double sueldoAcumulado = sueldoDiario * diasTrabajadosSemana;
+
   if (horaEntradaReal != null && horaEntradaReal.isNotEmpty) {
     DateTime inicioEfectivo =
         entradaReal.isAfter(entradaOficial) ? entradaReal : entradaOficial;
@@ -74,46 +76,10 @@ double calculadoraNeto(
     if (segundosHoy > 0) sueldoAcumulado += (segundosHoy * sueldoPorSegundo);
   }
 
-  // 2. CALCULAMOS RETARDOS
-  double retardos = 0.0;
-  if (horaEntradaReal != null &&
-      horaEntradaReal.isNotEmpty &&
-      entradaReal.isAfter(entradaOficial)) {
-    int segRetardo = entradaReal.difference(entradaOficial).inSeconds;
-    retardos = segRetardo * sueldoPorSegundo;
-  }
+  // 2. LA SUMA Y RESTA FINAL
+  // Eliminamos el descuento de faltas y retardos. Solo sumamos bonos/propinas y restamos la reposición de caja.
+  double netoFinal = (sueldoAcumulado + propinas + bonos) - reposicion;
 
-  // 3. CALCULAMOS FALTAS (Susto incluido)
-  double faltas = faltasAcumuladas * sueldoDiario;
-  int diaHoy = ahora.weekday;
-  int numDiaDescanso = 0;
-  String desc = diaDeDescanso != null ? diaDeDescanso.toLowerCase() : "";
-  if (desc == "lunes")
-    numDiaDescanso = 1;
-  else if (desc == "martes")
-    numDiaDescanso = 2;
-  else if (desc == "miercoles" || desc == "miércoles")
-    numDiaDescanso = 3;
-  else if (desc == "jueves")
-    numDiaDescanso = 4;
-  else if (desc == "viernes")
-    numDiaDescanso = 5;
-  else if (desc == "sabado" || desc == "sábado")
-    numDiaDescanso = 6;
-  else if (desc == "domingo") numDiaDescanso = 7;
-
-  if (diaHoy != numDiaDescanso) {
-    if (ahora.isAfter(entradaOficial) &&
-        (horaEntradaReal == null || horaEntradaReal.isEmpty)) {
-      faltas += sueldoDiario;
-    }
-  }
-
-  // 4. LA SUMA Y RESTA FINAL
-  double netoFinal =
-      (sueldoAcumulado + propinas + bonos) - (faltas + retardos + reposicion);
-
-  // Evitamos que le salga saldo negativo si las faltas son mayores a lo que lleva ganado
   return netoFinal < 0 ? 0.00 : netoFinal;
 
   /// MODIFY CODE ONLY ABOVE THIS LINE
