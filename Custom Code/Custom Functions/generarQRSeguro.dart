@@ -12,11 +12,11 @@ import '/flutter_flow/uploaded_file.dart';
 import '/backend/backend.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-String generarQRSeguro(String numEmpleado) {
+String generarQRSeguro(String numEmpleado, String puestoActual) {
   /// MODIFY CODE ONLY BELOW THIS LINE
 
   DateTime ahora = DateTime.now();
-  // Se suman los 5 minutos de tolerancia
+  // Se suman los 5 minutos de tolerancia de validez del codigo
   DateTime expiracion = ahora.add(Duration(minutes: 5));
 
   // Formato continuo: yyyyMMddHHmm
@@ -24,9 +24,9 @@ String generarQRSeguro(String numEmpleado) {
     return "${d.year}${d.month.toString().padLeft(2, '0')}${d.day.toString().padLeft(2, '0')}${d.hour.toString().padLeft(2, '0')}${d.minute.toString().padLeft(2, '0')}";
   }
 
-  // 1. El Texto Base
+  // 1. El Texto Base Dinámico (Acepta Dueño o Encargada)
   String baseTxt =
-      "LLAVE_Encargada_${numEmpleado}_${format(ahora)}_${format(expiracion)}";
+      "LLAVE_${puestoActual}_${numEmpleado}_${format(ahora)}_${format(expiracion)}";
 
   // 2. Inyectar el ruido secreto ("R1K0") cada 5 caracteres
   String ruido = "R1K0";
