@@ -22,8 +22,8 @@ bool validarQRSeguro(String qrEscaneado) {
     // 2. Eliminar el ruido
     String limpio = descodificado.replaceAll("R1K0", "");
 
-    // 3. Validar la firma inicial
-    if (!limpio.startsWith("LLAVE_Encargada_")) return false;
+    // 3. Validar la firma inicial (Permite Dueño o Encargada)
+    if (!limpio.startsWith("LLAVE_Encargada_") && !limpio.startsWith("LLAVE_Dueño_")) return false;
 
     // 4. Extraer el tiempo límite de expiración
     List<String> partes = limpio.split('_');
