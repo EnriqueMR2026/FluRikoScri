@@ -1,7 +1,8 @@
 # 📦 ESTRUCTURA MAESTRA DE BASE DE DATOS: RIKO APP & RIKO PRO
 
 ## Colección: Usuarios
-**Descripción de la Colección:** Almacena los perfiles de los empleados y del dueño. Funciona como la fuente de verdad para el login casero, el cálculo de la nómina y el control de accesos (roles) dentro de la app.
+**Descripción de la Colección:** 
+Almacena los perfiles de los empleados y del dueño. Funciona como la fuente de verdad para el login casero, el cálculo de la nómina y el control de accesos (roles) dentro de la app.
 
 ### Fields (Campos) para InicioSesionCasero y Seguridad:
 * **nombreEmpleado**
@@ -149,7 +150,8 @@
     * Description: La suma final y exacta que la calculadora arrojó en el instante del cierre.
 
 ## Colección: HistorialAsistencias
-**Descripción de la Colección:** Colección principal para guardar el registro diario de asistencias, faltas, retardos y descansos de todos los empleados. Alimenta el calendario visual y justifica los cálculos de la nómina.
+**Descripción de la Colección:** 
+Colección principal para guardar el registro diario de asistencias, faltas, retardos y descansos de todos los empleados. Alimenta el calendario visual y justifica los cálculos de la nómina.
 
 ### Fields (Campos) de Identificación y Búsqueda:
 * **refEmpleado**
