@@ -83,3 +83,31 @@ Todas estas variables tienen la opción **Persisted: Encendido**. Esto significa
   * **Field Type:** Integer
   * **Is List:** Apagado
   * **Persisted:** Encendido
+
+
+1. El QR: Validez vs. Puntualidad ⏱️
+Comprendido al 100%. Los 5 minutos del código QR son exclusivamente Tiempo de Vida del Código (Caducidad) para evitar que guarden fotos.
+
+La puntualidad (para saber si es "Asistencia" o "Retardo") se calculará comparando la hora exacta en que escaneó vs. su horaEntradaOficialGuardada. Si entra a las 17:03, el QR es válido y lo deja pasar, pero el sistema automáticamente inscribe "Retardo" en su documento de HistorialAsistencias y el calendario se pinta de naranja.
+
+2. La Regla de Oro de la Calculadora (Ni antes, ni retroactivo) 🧮
+Para cumplir con tu regla de que no se pague dinero de más, nuestra Custom Function de la calculadora en la página de Nómina usará una condición de "El Tiempo Mayor":
+
+Si llega temprano (ej. 16:40): Entra, su turnoIniciadoGuardado se pone en True, pero la calculadora detecta que aún no son las 17:00. Se queda en $ 0 y no arranca hasta que el reloj marque su horaEntradaOficialGuardada.
+
+Si llega tarde (ej. 17:20): La calculadora no usará la hora oficial, sino la hora exacta de su escaneo (horaEntradaReal). Así, empieza a sumar desde cero a las 17:20, cobrándole efectivamente esos 20 minutos perdidos al no pagárselos.
+
+3. El Sistema Anti-Faltas y Permisos de Riko Pro 🚫
+Esta es una arquitectura de permisos padrísima. Lo manejaremos así:
+
+Ocultar el Botón de Entrada (El Castigo): Modificaremos la "Lógica de Condición de Visibilidad: #31". Si el empleado recibe una "Falta" (ya sea que la ponga la Encargada, el Dueño, o la marque el sistema automáticamente), le enviaremos una Notificación silenciosa que apague su botón de escanear. Ya no podrá registrar entrada ese día en absoluto.
+
+El Poder del Dueño (El Perdón en Riko Pro): En tu app (Riko Pro), tendrás un panel donde verás a los faltistas del día. Si alguien te avisa que tuvo una emergencia y lo dejas entrar tarde, tendrás un botón mágico llamado "Quitar Falta / Asignar Entrada Manual".
+
+La Magia de la Sincronización: Al tocar ese botón en Riko Pro:
+
+Borras la "Falta" en Firebase y le creas su entrada con la hora actual (o la que tú decidas).
+
+Disparas una notificación de categoría actualizacion_datos al empleado.
+
+Su teléfono recibe la señal, le devuelve el botón de salida (por si necesita marcar salida al rato) y arranca su calculadora de Nómina desde la hora que le asignaste.
