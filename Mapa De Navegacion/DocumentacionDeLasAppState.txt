@@ -84,6 +84,36 @@ Todas estas variables tienen la opción **Persisted: Encendido**. Esto significa
   * **Is List:** Apagado
   * **Persisted:** Encendido
 
+Field Name: sueldoAcumuladoGuardado
+
+Description: "La Alcancía". Guarda el dinero real generado en los días anteriores de la semana para que, si el empleado falta el jueves, la app sepa cuánto dinero exacto tenía acumulado antes de restarle sus deducciones.
+
+Field Type: Double
+
+Is List: Apagado
+
+Persisted: Encendido
+
+Field Name: telefonoGuardado
+
+Description: Dato de contacto actualizado mediante notificaciones silenciosas.
+
+Field Type: String
+
+Is List: Apagado
+
+Persisted: Encendido
+
+Field Name: correoGuardado
+
+Description: Dato de contacto actualizado mediante notificaciones silenciosas.
+
+Field Type: String
+
+Is List: Apagado
+
+Persisted: Encendido
+
 
 1. El QR: Validez vs. Puntualidad ⏱️
 Comprendido al 100%. Los 5 minutos del código QR son exclusivamente Tiempo de Vida del Código (Caducidad) para evitar que guarden fotos.

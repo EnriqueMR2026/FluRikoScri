@@ -1,0 +1,33 @@
+Aquí guardaremos el código fuente y el propósito de cada función para que, si alguna vez las borras por error en FlutterFlow, solo vengas aquí a copiarlas.
+
+1. Función: calcularRetardosCobrados
+
+Return Type: Double
+
+Argumentos: sueldoSemanal (Double), diasTrabajados (Integer), sueldoAcumuladoGuardado (Double).
+
+Descripción: Calcula el dinero exacto perdido por llegar tarde. Compara lo que debió ganar (Sueldo diario * Días) contra lo que realmente ganó su cronómetro (sueldoAcumuladoGuardado).
+
+2. Función: calcularNetoAPagar
+
+Return Type: Double
+
+Argumentos: sueldoAcumuladoGuardado (Double), propinas (Double), bonos (Double), reposicion (Double).
+
+Descripción: Suma el sueldo mermado por retardos con las percepciones extras y resta la reposición por daños.
+
+3. Función: diaActualEspanol
+
+Return Type: String
+
+Argumentos: Ninguno.
+
+Descripción: Lee el reloj interno del teléfono y devuelve el día actual capitalizado (Ej. "Lunes") sin necesidad de paquetes externos.
+
+4. Función: yaEsTarde
+
+Return Type: Boolean
+
+Argumentos: horaOficial (String).
+
+Descripción: Convierte el texto "HH:mm" de la hora de entrada del empleado a un formato de tiempo real y evalúa si el reloj del teléfono ya rebasó ese límite.
