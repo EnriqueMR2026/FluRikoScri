@@ -35,7 +35,7 @@ Riko App {
                 Bloqueo por Falta: Si App State (turnoIniciado) es False, el Loop se rompe y la calculadora se congela.
                 Ajuste Medianoche: La matemática reconoce si el turno cruza de PM a AM para no reiniciar el cronómetro.
             }
-            ReciboAnterior_LazyLoading {
+            NominaAnterior VER {
                 ContenedorPadre: Hace un Query Collection a 'Nominas' (List of Documents, Limit 1, Single Time Query = True, Enable Query Cache = True). No gasta lecturas recurrentes.
                 BotonVER_Inteligente: No borra caché. Evalúa 'Nominas Documents -> Is Set and Not Empty'. 
                     - Si True: Abre 'ModalNominaAnterior' pasándole el 'Item at Index -> First'.
