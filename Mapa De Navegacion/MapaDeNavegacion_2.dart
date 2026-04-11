@@ -43,7 +43,7 @@ Riko App {
             }
             SincronizacionDeLecturas_PushToSync {
                 El botón de 'Nómina' en el 'MenuPrincipal' es el Guardia. 
-                Si encuentra una notificación de categoría 'nomina' (ej. subcategoría 'nuevo_corte' o actualizaciones de propinas), ejecuta 'Clear Query Cache', actualiza los App States financieros, y borra la notificación antes de dejar entrar al usuario.
+                Si encuentra una notificación hace un loop y revisa condicionales en escalon por categoría y subcategoria, y usa el 'ValorNumerico' o 'mensajeOpcional' y actualiza los App States financieros, y borra la notificación antes de dejar entrar al usuario a ver la pagina de Nomina (Solo si encuentra una notificacion con categoria 'nomina' y subcategoria 'Nueva Nomina' hace el Clear Query Cache de ).
             }
             MuestraEnPantalla {
                 nombreEmpleado, numeroEmpleado, telefono, correo, sueldoAcumulado (calculadora estática), bonosPropinas, bonos, faltas, retardos, repocision, y neto a pagar (calculadora viva abajo).
