@@ -43,7 +43,7 @@ Riko App {
             }
         }
         
-        Asistencia {  // Ya construido
+        Asistencia {  // Ya construido solo el diseño
 
             // Condicion de Visibilidad: "Encargada", "Mesera", "Cocinero
             EstructuraSuperior {
