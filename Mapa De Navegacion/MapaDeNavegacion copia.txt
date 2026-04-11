@@ -22,7 +22,7 @@ Riko App {
     MenuPrincipal { // Tiene 5 Botones verticalmente |  Ya construido
         
         // Condicion de Visibilidad o Acceso: "Encargada", "Mesera", "Cocinero"
-        Nomina { // Ya construido
+        Nomina { // Ya construido | "Logica de Funcionalidad al tocarlo: #15"
             Visual {
                 Formato limpio de "Recibo Semanal" (Encabezado, Percepciones, Deducciones, Total Neto a Pagar), sin códigos oficiales.
             }
@@ -31,15 +31,23 @@ Riko App {
             }
             CalculadoraEnTiempoReal {
                 Muestra el sueldo acumulado sumando centavos segundo a segundo (Ej. $ 48.2964 MXN).
-                Se ejecuta localmente usando Custom Function sin gastar lecturas.
-                Bloqueo por Falta: Si App State (turnoIniciado) es False, la calculadora se congela porque no hay registro de entrada.
+                Motor Híbrido: Utiliza un Loop en OnPageLoad con un Delay dinámico conectado al 'MenuVelocidad' (Slider 1% - 100% convertido a milisegundos).
+                Bloqueo por Falta: Si App State (turnoIniciado) es False, el Loop se rompe y la calculadora se congela.
+                Ajuste Medianoche: La matemática reconoce si el turno cruza de PM a AM para no reiniciar el cronómetro.
             }
-            SincronizacionDeLecturas {
-                Sueldo Base: Solo hace lectura a Firestore el día 1 de cada mes para saber si ya se le subio su sueldo o no.
-                Propinas/Bonos: Solo hace lectura a Firestore todos los días a partir de las 12:00 PM (Mediodía).
+            ReciboAnterior_LazyLoading {
+                ContenedorPadre: Hace un Query Collection a 'Nominas' (List of Documents, Limit 1, Single Time Query = True, Enable Query Cache = True). No gasta lecturas recurrentes.
+                BotonVER_Inteligente: No borra caché. Evalúa 'Nominas Documents -> Is Set and Not Empty'. 
+                    - Si True: Abre 'ModalNominaAnterior' pasándole el 'Item at Index -> First'.
+                    - Si False: Abre un Dialog "Sin Historial".
+            }
+            SincronizacionDeLecturas_PushToSync {
+                El botón de 'Nómina' en el 'MenuPrincipal' es el Guardia. 
+                Si encuentra una notificación de categoría 'nomina' (ej. subcategoría 'nuevo_corte' o actualizaciones de propinas), ejecuta 'Clear Query Cache', actualiza los App States financieros, y borra la notificación antes de dejar entrar al usuario.
             }
             MuestraEnPantalla {
-                nombreEmpleado, numeroEmpleado, telefono, correo, sueldoAcumulado (calculadora), bonosPropinas, bonos, faltas, retardos, repocision, y neto a pagar (calculadora).
+                nombreEmpleado, numeroEmpleado, telefono, correo, sueldoAcumulado (calculadora estática), bonosPropinas, bonos, faltas, retardos, repocision, y neto a pagar (calculadora viva abajo).
+                Escudo Cero Absoluto: El Balance nunca muestra números negativos.
             }
         }
         
