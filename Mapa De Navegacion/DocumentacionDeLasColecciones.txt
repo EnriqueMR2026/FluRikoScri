@@ -167,10 +167,10 @@ Colección principal para guardar el registro diario de asistencias, faltas, ret
     * Is List: Off
     * Description: Fecha guardada en formato de texto puro (Ej. "2026-04-06"). Es un truco para que las búsquedas y los filtros en la tabla del calendario sean rapidísimos y no gasten procesamiento calculando días.
 // Fields (Campos) de Estatus y Horarios Reales:
-* **estadoDia**
+* * estadoAsistencia
     * Type: String
     * Is List: Off
-    * Description: Palabra clave del estado exacto del empleado ese día: "Asistencia", "Falta", "Retardo" o "Descanso". Esta palabra es la que lee la Custom Function para pintar los cuadritos de colores en el calendario.
+    * Description: Palabra clave del estado exacto del empleado al entrar: "Asistencia" (Verde) o "Retardo" (Naranja). Se evalúa automáticamente con una Custom Function al escanear el QR.
 * **horaEntradaReal**
     * Type: Timestamp
     * Is List: Off
