@@ -196,6 +196,10 @@ Is List: Off
 
 Description: Guarda la versión actual de la app que tiene instalada el empleado. El menú principal lo compara con las Notificaciones para obligarlo a actualizar la app si se queda atrás.
 
+* horaEntradaReal
+    * Type: DateTime
+    * Is List: Off
+    * Description: El sello de tiempo blindado en la base de datos que registra a qué hora inició su turno actual. Se usa para rellenar el App State si el empleado reinstala la app a medio turno.
 
 🧠 ¿Por qué guardamos sueldoAcumuladoGuardado en Firebase? : Recuerda que tu calculadora en la pantalla sube en vivo y se borra si cierran sesión. Si tu empleado trabaja el lunes, martes y miércoles (con algunos retardos) y el jueves falta, el sistema necesita castigarlo el jueves cerrando su nómina.
 ¿Pero cómo vas a saber exactamente cuánto dinero restarle por sus retardos de los días anteriores? ¡Exacto! Porque cada que el empleado marca su salida (lunes, martes, etc.), guardamos su dinero real de ese día en sueldoAcumuladoGuardado en Firebase. Así, el jueves, la Custom Function compara su sueldo base vs. su "Caja Fuerte Histórica" y saca la matemática perfecta de su castigo. ¡Es pura protección para tu dinero!

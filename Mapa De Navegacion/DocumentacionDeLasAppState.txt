@@ -114,6 +114,12 @@ Is List: Apagado
 
 Persisted: Encendido
 
+* Field Name: horaEntradaRealGuardado
+  * Description: Guarda el momento exacto en que el empleado escaneó su entrada. Se llena desde Firebase al iniciar sesión por si borra la app, o al instante de registrar entrada. Es el motor principal que le dice a la calculadora de nómina desde qué minuto exacto empezar a sumar dinero.
+  * Field Type: DateTime
+  * Is List: Apagado
+  * Persisted: Encendido
+
 
 1. El QR: Validez vs. Puntualidad ⏱️
 Comprendido al 100%. Los 5 minutos del código QR son exclusivamente Tiempo de Vida del Código (Caducidad) para evitar que guarden fotos.
