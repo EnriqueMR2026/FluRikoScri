@@ -1,33 +1,36 @@
 Aquí guardaremos el código fuente y el propósito de cada función para que, si alguna vez las borras por error en FlutterFlow, solo vengas aquí a copiarlas.
 
 1. Función: calcularRetardosCobrados
-
 Return Type: Double
-
 Argumentos: sueldoSemanal (Double), diasTrabajados (Integer), sueldoAcumuladoGuardado (Double).
-
 Descripción: Calcula el dinero exacto perdido por llegar tarde. Compara lo que debió ganar (Sueldo diario * Días) contra lo que realmente ganó su cronómetro (sueldoAcumuladoGuardado).
 
 2. Función: calcularNetoAPagar
-
 Return Type: Double
-
 Argumentos: sueldoAcumuladoGuardado (Double), propinas (Double), bonos (Double), reposicion (Double).
-
 Descripción: Suma el sueldo mermado por retardos con las percepciones extras y resta la reposición por daños.
 
 3. Función: diaActualEspanol
-
 Return Type: String
-
 Argumentos: Ninguno.
-
 Descripción: Lee el reloj interno del teléfono y devuelve el día actual capitalizado (Ej. "Lunes") sin necesidad de paquetes externos.
 
 4. Función: yaEsTarde
-
 Return Type: Boolean
-
 Argumentos: horaOficial (String).
-
 Descripción: Convierte el texto "HH:mm" de la hora de entrada del empleado a un formato de tiempo real y evalúa si el reloj del teléfono ya rebasó ese límite.
+
+5. Función: calcularSueldoEnVivo
+Return Type: Double
+Argumentos: sueldoSemanal (Double), horaEntradaOficial (String), horaSalidaOficial (String), entradaReal (DateTime), sueldoAcumuladoAyer (Double).
+Descripción: El Cerebro de la Nómina. Calcula el sueldo segundo a segundo respetando el "Modo Espera" si llega temprano, ajustando el inicio si llega tarde, y topando el sueldo si sale tarde. Soporta turnos que cruzan la medianoche.
+
+6. Función: obtenerDiaLaboral
+Return Type: String
+Argumentos: horaActual (DateTime).
+Descripción: Ajuste de Madrugada. Recibe la 'horaEntrada' de un ticket y devuelve qué día es (Ej. "Lunes"). Si la hora es antes de las 6:00 AM, el sistema asume inteligentemente que pertenece al día anterior para que los cortes de nómina no fallen en turnos nocturnos.
+
+7. Función: evaluarEstadoEntrada
+Return Type: String
+Argumentos: horaActual (DateTime), horaEntradaOficial (String).
+Descripción: El Juez de la Puntualidad. Compara la hora en que el empleado escanea el QR contra su horario oficial (soportando turnos de madrugada). Devuelve "Asistencia" si llega a tiempo o temprano, y "Retardo" si llega un minuto o más tarde.

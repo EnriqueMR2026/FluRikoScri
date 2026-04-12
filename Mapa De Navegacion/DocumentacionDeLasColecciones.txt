@@ -79,6 +79,11 @@ Almacena los perfiles de los empleados y del dueño. Funciona como la fuente de 
     * Type: Integer (todos)
     * Is List: Off
     * Description: Contadores que afectan el sueldo (Deducciones) o habilitan validaciones. Se resetean a 0 al momento del corte.
+* **horaEntradaReal**
+    * Description: Guarda el momento exacto en que el empleado escaneó su entrada. Este valor llena al horaEntradaRealGuardado de la app state por si el empleado borra la app, ademas podremos ver en la base de datos el dato real de su entrada, llego temprano o tarde
+    * Field Type: DateTime
+    * Is List: Apagado
+    * Persisted: Encendido
 
 ## Colección: Notificaciones
 **Descripción de la Colección:** Sistema de sincronización silenciosa (Push-to-Sync) y alertas. Sirve como gatillo para que la app del empleado actualice sus App States específicos solo cuando hay cambios reales, ahorrando miles de lecturas innecesarias en Firebase.
