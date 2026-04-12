@@ -163,7 +163,7 @@ Colección principal para guardar el registro diario de asistencias, faltas, ret
     * Type: Document Reference (Collection: Usuarios)
     * Is List: Off
     * Description: Referencia exacta al empleado dueño de este registro. Vital para filtrar su historial personal.
-* **fechaRegistro**
+* **fechaDelRegistro**
     * Type: Timestamp
     * Is List: Off
     * Description: Fecha y hora exacta en la que se crea el documento (ya sea porque escaneó su entrada o porque el sistema le marcó falta).
